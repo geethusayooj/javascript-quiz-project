@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     new Question("What is the mass–energy equivalence equation?", ["E = mc^2", "E = m*c^2", "E = m*c^3", "E = m*c"], "E = mc^2", 3),
     // Add more questions here
   ];
-  const quizDuration = 120; // 120 seconds (2 minutes)
+  const quizDuration = 10; // 120 seconds (2 minutes)
 
 
   /************  QUIZ INSTANCE  ************/
@@ -56,11 +56,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show first question
   showQuestion();
-
-
+  
   /************  TIMER  ************/
-
+  
   let timer;
+  startTimer()
+
+  function startTimer(){
+
+    timer = setInterval(() => {
+      quiz.timeRemaining--;
+  
+      const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+      const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+      timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+  
+      if(quiz.timeRemaining <= 0 ){
+        clearInterval(timer);
+       showResults()
+      }
+    },1000);
+  }
 
 
   /************  EVENT LISTENERS  ************/
@@ -177,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
     quiz.moveToNextQuestion();
     showQuestion();
 
-
     // YOUR CODE HERE:
     //
     // 1. Get all the choice elements. You can use the `document.querySelectorAll()` method.
@@ -211,6 +226,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. Update the result container (div#result) inner text to show the number of correct answers out of total questions
 
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${quiz.questions.length} correct answers!`; // This value is hardcoded as a placeholder
-  }
+  } 
+  const restartingButton = document.querySelector("#restartButton");
+  restartingButton.addEventListener("click", () => {
+    endView.style.display = "none";
+    quizView.style.display = "block";
+    quiz.currentQuestionIndex = 0;
+    quiz.correctAnswers = 0;
+    quiz.timeRemaining = 120
+    quiz.shuffleQuestions();
+    showQuestion();
+    startTimer()
 
+  });
+  
 });
